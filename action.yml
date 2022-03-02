@@ -1,0 +1,28 @@
+name: 'ArgoCD applications'
+description: 'Action to create ArgoCD applications'
+inputs:
+  image-tag:
+    description: 'Image tag'
+    default: ${{ github.sha }}
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v2
+    - name: 'Set environment'
+      run: |
+        BRANCH=$(echo ${GITHUB_REF#refs/heads/})
+        ENVIRONMENT="STAGING"
+
+        if [ $BRANCH == "main" ] || [ $BRANCH == "master" ]; then
+            ENVIRONMENT="PRODUCTION"
+        fi
+
+         echo "ENVIRONMENT=${ENVIRONMENT}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Test
+      run: |
+        echo $ENVIRONMENT
+        cat README.md
+      shell: bash
